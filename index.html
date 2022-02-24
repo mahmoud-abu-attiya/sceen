@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src=
+"https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.5/dist/html2canvas.min.js">
+  </script>
+</head>
+<body>
+    <div>
+        <h2>hihiihihihi</h2>
+        <p>this is message</p>
+    </div>
+    <button>share</button>
+    <script>
+        function dataURItoBlob(dataURI) {
+    // convert base64 to raw binary data held in a string
+    // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+    var byteString = atob(dataURI.split(',')[1]);
+
+    // separate out the mime component
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+    // write the bytes of the string to an ArrayBuffer
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+
+    //Old Code
+    //write the ArrayBuffer to a blob, and you're done
+    //var bb = new BlobBuilder();
+    //bb.append(ab);
+    //return bb.getBlob(mimeString);
+
+    //New Code
+    return new Blob([ab], {type: mimeString});
+
+
+}
+        document.querySelector('button').onclick = (e)=>{
+            html2canvas(document.querySelector('div'), {
+                allowTaint: true,
+                useCORS: true,
+                })
+                .then(function (canvas) {
+                // It will return a canvas element
+                let image = canvas.toDataURL("image/png", 0.5);
+                image = dataURItoBlob(image)
+                image = new File([image], 'screenshot.png', {type:'image/png'})
+                console.log(image)
+                navigator.share({
+                    title: 'screenshot',
+                    files: [image],
+                    text: 'hhhhhhhhh'
+                })
+                })
+                .catch((e) => {
+                // Handle errors
+                console.log(e);
+                });
+        }
+    </script>
+</body>
+</html>
